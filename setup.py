@@ -238,6 +238,8 @@ def seed(con):
 def main():
     print(f"Setting up PUR Monitor DB -> {DB_PATH}")
     con = duckdb.connect(DB_PATH)
+    for tbl in ["parcel_visits","project_targets","parcels","farmers","projects","countries","regions","species","ref_erosion","ref_soil_texture","ref_mortality","ref_planting_model"]:
+        con.execute(f"DROP TABLE IF EXISTS {tbl} CASCADE")
     con.execute(DDL)
     seed(con)
     con.close()

@@ -288,6 +288,8 @@ COMMANDS = {
     "projects":  (cmd_projects,  "Per-project progress vs. targets"),
     "mortality": (cmd_mortality, "Top mortality causes ranked by tree loss"),
     "farmers":   (cmd_farmers,   "Gender breakdown + active rate per project"),
+    "export":    (lambda: cmd_export(sys.argv[2] if len(sys.argv) > 2 else "csv"), "Export to CSV/JSON"),
+    "species":   (cmd_species_breakdown, "Species distribution across active parcels"),
 }
 
 
@@ -309,3 +311,108 @@ if __name__ == "__main__":
 
     fn, _ = COMMANDS[sys.argv[1]]
     fn()
+
+
+def cmd_export(fmt: str = "csv"):
+    """
+    Export monitoring data to CSV or JSON for external reporting.
+
+    Usage:
+        python monitor.py export          # exports to CSV (default)
+        python monitor.py export json     # exports to JSON
+
+    Outputs:
+        pur_monitor_export.csv / pur_monitor_export.json
+    """
+    import json
+    from pathlib import Path
+    from datetime import date
+
+    con = get_con()
+
+    rows = con.execute("""
+        SELECT
+            p.project_name,
+            c.country_name,
+            p.start_date,
+            p.end_date,
+            COUNT(DISTINCT f.farmer_id) FILTER (WHERE f.is_active) AS active_farmers,
+            COUNT(DISTINCT pa.parcel_id) FILTER (WHERE pa.is_active) AS active_parcels,
+            COALESCE(SUM(pa.number_of_tree) FILTER (WHERE pa.is_active), 0) AS planned_trees,
+            COALESCE(SUM(pa.area_to_plant) FILTER (WHERE pa.is_active), 0) AS area_ha,
+            pt.target_trees,
+            pt.target_farmers,
+            pt.target_parcels,
+            ROUND(
+                COUNT(DISTINCT f.farmer_id) FILTER (WHERE f.is_active) * 100.0
+                / NULLIF(pt.target_farmers, 0), 1
+            ) AS farmer_attainment_pct
+        FROM projects p
+        JOIN countries c USING (country_id)
+        LEFT JOIN farmers f USING (project_id)
+        LEFT JOIN parcels pa USING (project_id)
+        LEFT JOIN project_targets pt USING (project_id)
+        GROUP BY p.project_id, p.project_name, c.country_name, p.start_date, p.end_date,
+                 pt.target_trees, pt.target_farmers, pt.target_parcels
+        ORDER BY p.project_name
+    """).fetchdf()
+
+    export_date = date.today().isoformat()
+
+    if fmt == "json":
+        out_path = Path("pur_monitor_export.json")
+        payload = {
+            "export_date": export_date,
+            "projects": rows.to_dict(orient="records"),
+        }
+        out_path.write_text(json.dumps(payload, indent=2, default=str))
+        console.print(f"[green]✓ Exported {len(rows)} projects to {out_path}[/green]")
+    else:
+        out_path = Path("pur_monitor_export.csv")
+        rows.to_csv(out_path, index=False)
+        console.print(f"[green]✓ Exported {len(rows)} projects to {out_path}[/green]")
+        console.print(rows.to_string(index=False))
+
+    con.close()
+
+
+def cmd_species_breakdown():
+    """
+    Show species distribution across active parcels.
+
+    Usage:
+        python monitor.py species
+    """
+    con = get_con()
+
+    rows = con.execute("""
+        SELECT
+            s.species_name,
+            s.species_type,
+            COUNT(pa.parcel_id) AS parcel_count,
+            COALESCE(SUM(pa.number_of_tree), 0) AS total_trees,
+            ROUND(AVG(pa.area_to_plant), 2) AS avg_area_ha
+        FROM parcels pa
+        JOIN species s USING (species_id)
+        WHERE pa.is_active
+        GROUP BY s.species_id, s.species_name, s.species_type
+        ORDER BY total_trees DESC
+        LIMIT 20
+    """).fetchall()
+
+    console.print(Panel("[bold green]Species Breakdown — Active Parcels[/bold green]", expand=False))
+
+    t = Table(box=box.ROUNDED, show_header=True, header_style="bold cyan")
+    t.add_column("Species", style="bold")
+    t.add_column("Type")
+    t.add_column("Parcels", justify="right")
+    t.add_column("Total Trees", justify="right")
+    t.add_column("Avg Area (ha)", justify="right")
+
+    for r in rows:
+        t.add_row(str(r[0]), str(r[1] or "—"), str(r[2]), f"{int(r[3]):,}", f"{r[4] or 0:.2f}")
+
+    console.print(t)
+    con.close()
+
+

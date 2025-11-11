@@ -106,3 +106,40 @@ parcel_visits → ref_mortality
 - **mortality_id** on parcels: the "dominant" expected mortality risk; on visits: the
   observed cause that cycle.
 - Kobo Toolbox submission IDs (`kobo_submission_id`) simulate real field data collection.
+
+---
+
+## [v1.3.0] New Commands (2026-03-05)
+
+### Export
+
+Export full project monitoring data for external reporting:
+
+```bash
+# Export to CSV
+python3.12 monitor.py export
+
+# Export to JSON (for API/dashboard integration)
+python3.12 monitor.py export json
+```
+
+Output: `pur_monitor_export.csv` with columns: `project_name`, `country_name`, `active_farmers`, `active_parcels`, `planned_trees`, `area_ha`, `farmer_attainment_pct`
+
+### Species Breakdown
+
+```bash
+python3.12 monitor.py species
+```
+
+Shows species distribution across active parcels — species name, type, parcel count, total trees, and average area.
+
+### Updated Command Reference
+
+| Command | Description |
+|---------|-------------|
+| `summary` | KPI overview: farmers, parcels, trees vs. targets |
+| `projects` | Per-project progress table with % achievement |
+| `mortality` | Top mortality causes ranked by tree loss |
+| `farmers` | Gender breakdown + active rate per project |
+| `export [json]` | Export project data to CSV or JSON |
+| `species` | Species distribution across active parcels |

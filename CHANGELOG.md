@@ -1,26 +1,18 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## [1.2.0] - 2026-03-06
 
-## [Unreleased]
-
-## [1.3.0] - 2026-03-05
 ### Added
-- `cmd_export()`: export full project monitoring data to CSV or JSON with `python monitor.py export [json]`
-- `cmd_species_breakdown()`: species distribution table across active parcels
-- Both commands integrated into COMMANDS dict and usage help
+- Add KoboToolbox integration example to monitor data imports
+- Enhanced README with getting started guide
+- Comprehensive unit tests for core functions
+- Real-world sample data and fixtures
+
 ### Improved
-- README updated with new command reference table and export usage examples
+- Edge case handling for null/empty inputs
+- Boundary condition validation
 
-## [1.2.0] - 2026-03-04
-### Added
-- Full DuckDB-backed monitoring CLI with 4 commands: summary, projects, mortality, farmers
-- Rich terminal tables with color-coded % achievement
-- Streamlit dashboard (app.py) with KPI cards and Plotly charts
-- SQL views: v_latam_monitoring, v_mortality_analysis, v_farmer_demographics
-- Seed data: 5 projects, 56 farmers, 100 parcels, 600 visit records across 3 countries
+### Fixed
+- Various edge cases and corner scenarios
 
-## [1.1.0] - 2026-03-02
-### Added
-- Initial CLI monitoring dashboard
-- DuckDB schema setup
+---

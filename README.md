@@ -223,6 +223,47 @@ For KoboToolbox integration issues, check:
 - Coordinate format: `lat, lon` (decimal degrees)
 - Timestamps in ISO 8601 with timezone
 
+## 🌍 Carbon Sequestration Analytics
+
+Track NbS impact on climate change mitigation by estimating carbon dioxide sequestration potential:
+
+### Example: Carbon Sequestration Report
+
+```python
+from analytics import PURAnalytics
+
+analytics = PURAnalytics("pur_monitor.db")
+
+# Calculate using default rates (15 kg CO2/tree/year)
+carbon_stats = analytics.calculate_carbon_sequestration()
+
+print(f"Trees alive: {carbon_stats['total_trees_alive']}")
+print(f"Annual CO2 sequestration: {carbon_stats['avg_annual_carbon_tonnes']:.2f} tonnes")
+print(f"10-year projection: {carbon_stats['10_year_projection_tonnes']:.2f} tonnes CO2")
+print(f"30-year projection: {carbon_stats['30_year_projection_tonnes']:.2f} tonnes CO2")
+```
+
+### Custom Carbon Rates by Species
+
+Use domain-specific carbon sequestration rates:
+
+```python
+# Species-specific CO2 sequestration (kg/tree/year)
+species_rates = {
+    "eucalyptus": 20.0,  # Fast-growing, high sequestration
+    "cedar": 18.0,
+    "native_mixed": 15.0,
+    "agroforestry": 22.0,
+}
+
+carbon = analytics.calculate_carbon_sequestration(species_rates)
+```
+
+**Typical rates:**
+- Agroforestry species: 20-25 kg CO2/tree/year
+- Native species: 12-18 kg CO2/tree/year
+- Reforestation: 10-15 kg CO2/tree/year
+
 ## 📄 License
 
 MIT License. See LICENSE file for details.

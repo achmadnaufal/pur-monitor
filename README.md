@@ -275,4 +275,26 @@ See [CHANGELOG.md](CHANGELOG.md) for version history and recent improvements.
 
 ## Usage Examples
 
+### Tree Survival Trend Analysis
+
+```python
+from analytics import PURAnalytics
+
+analytics = PURAnalytics("pur_monitor.db")
+
+trend = analytics.calculate_survival_trend(window_visits=3)
+print(f"Portfolio trend:    {trend['trend_direction']}")
+print(f"Earliest survival:  {trend['avg_survival_first_visit_pct']:.1f}%")
+print(f"Latest survival:    {trend['avg_survival_latest_visit_pct']:.1f}%")
+print(f"Change:             {trend['change_pct_points']:+.1f} pp")
+```
+
+### Identify High-Mortality Parcels for Field Follow-Up
+
+```python
+worst = analytics.get_top_mortality_parcels(top_n=10, min_trees_planned=20)
+for p in worst:
+    print(f"{p['parcel_id']} | {p['farmer_name']:<20} | {p['mortality_rate_pct']:.1f}% mortality")
+```
+
 Refer to the `tests/` directory for comprehensive example implementations.

@@ -2,6 +2,14 @@
 
 All notable changes to the PUR Monitor project are documented in this file.
 
+## [2.3.0] - 2026-03-15
+
+### Added
+- **Survival Trend Analysis** — `calculate_survival_trend()`: Compares tree survival rates across the N most-recent visits per parcel; classifies portfolio trend as improving/stable/declining with pp change
+- **Top Mortality Parcels** — `get_top_mortality_parcels()`: Returns worst-performing parcels ranked by mortality rate with farmer name and visit date for targeted field follow-up
+- **Unit Tests** — 8 new tests in `tests/test_survival_trend.py` (mocked DuckDB) for trend direction, validation errors, and missing data handling
+- **README** — Added survival trend and mortality analysis usage examples
+
 ## [2.2.0] - 2026-03-12
 
 ### Added

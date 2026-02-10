@@ -1,0 +1,11 @@
+plot_id,ecosystem,climate_zone,area_ha,restoration_year,canopy_cover_pct,soil_depth_cm,notes
+MNG-ID-001,mangrove,tropical,48.5,2018,82.0,115.0,Segara Anakan mangrove restoration zone
+MNG-ID-002,mangrove,tropical,31.2,2019,71.0,98.0,Mahakam Delta replanting area
+MNG-TH-001,mangrove,tropical,64.0,2017,88.0,130.0,Krabi Province coastal mangrove belt
+MNG-VN-001,mangrove,tropical,22.8,2020,65.0,90.0,Ca Mau Peninsula mangrove fringe
+SEA-ID-001,seagrass,tropical,18.5,2021,55.0,75.0,Wakatobi seagrass bed restoration
+SEA-TH-001,seagrass,tropical,25.3,2020,70.0,85.0,Trang Province seagrass meadow
+MARSH-ID-001,tidal_marsh,tropical,12.0,2022,45.0,60.0,North Java coastal saltmarsh
+MARSH-ID-002,tidal_marsh,equatorial,8.7,2021,60.0,80.0,Kalimantan tidal marsh fringe
+MNG-ID-003,mangrove,equatorial,95.0,2016,91.0,145.0,East Kalimantan mangrove conservation area
+SEA-VN-001,seagrass,tropical,14.2,2022,48.0,65.0,Con Dao seagrass restoration patch

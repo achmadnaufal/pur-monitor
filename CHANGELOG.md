@@ -2,6 +2,20 @@
 
 All notable changes to the PUR Monitor project are documented in this file.
 
+## [2.5.0] - 2026-03-25
+
+### Added
+- **Deforestation Pressure Index** (`deforestation_pressure_index.py`) — composite threat score for PUR project site prioritization
+  - Five-driver weighted model: agricultural expansion (30%), road proximity (20%), population growth (15%), historical forest loss rate (25%), governance deficit (10%)
+  - FAO/GFW-aligned normalization with historical loss rate scaled to 0–10
+  - Five categorical pressure levels: Very Low → Critical
+  - Dominant driver identification with percentage contribution to total score
+  - Management recommendations and monitoring frequency per pressure level
+  - Batch assessment with automatic DPI-ranked sorting
+  - Portfolio summary with pressure distribution and high-risk site list
+  - Configurable driver weights for regional calibration
+- Unit tests: 20 new tests in `tests/test_deforestation_pressure_index.py`
+
 ## [2.4.0] - 2026-03-23
 
 ### Added

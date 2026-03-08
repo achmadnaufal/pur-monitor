@@ -2,6 +2,40 @@
 
 All notable changes to the PUR Monitor project are documented in this file.
 
+## [2.5.0] - 2026-03-25
+
+### Added
+- **Deforestation Pressure Index** (`deforestation_pressure_index.py`) — composite threat score for PUR project site prioritization
+  - Five-driver weighted model: agricultural expansion (30%), road proximity (20%), population growth (15%), historical forest loss rate (25%), governance deficit (10%)
+  - FAO/GFW-aligned normalization with historical loss rate scaled to 0–10
+  - Five categorical pressure levels: Very Low → Critical
+  - Dominant driver identification with percentage contribution to total score
+  - Management recommendations and monitoring frequency per pressure level
+  - Batch assessment with automatic DPI-ranked sorting
+  - Portfolio summary with pressure distribution and high-risk site list
+  - Configurable driver weights for regional calibration
+- Unit tests: 20 new tests in `tests/test_deforestation_pressure_index.py`
+
+## [2.4.0] - 2026-03-23
+
+### Added
+- `blue_carbon.py` — Blue Carbon Stock Calculator for coastal ecosystem projects
+  - `BlueCarbonPlot` dataclass with full validation (ecosystem, zone, area, canopy)
+  - `BlueCarbonCalculator` with IPCC Wetlands Supplement Tier 1 emission factors
+  - `total_carbon_stock()` — biomass + soil stocks aggregated by ecosystem
+  - `annual_sequestration()` — canopy-cover-weighted annual tCO2e/yr
+  - `project_lifetime_credits()` — gross/net credit projection with discount rate
+  - `ecosystem_summary()` — sorted per-ecosystem breakdown
+  - Supports mangrove, seagrass, and tidal marsh ecosystems
+  - Climate zones: equatorial, tropical, subtropical, temperate
+- `data/sample_blue_carbon_plots.csv` — 10 realistic blue carbon plots from SE Asia
+- 26 unit tests in `tests/test_blue_carbon.py`
+
+### References
+- IPCC Wetlands Supplement (2013)
+- Verra VCS VM0033
+- Howard et al. (2014) Coastal Blue Carbon
+
 ## [2.3.0] - 2026-03-15
 
 ### Added

@@ -2,6 +2,42 @@
 
 All notable changes to the PUR Monitor project are documented in this file.
 
+## [2.2.0] - 2026-03-12
+
+### Added
+
+- **Carbon Sequestration Analytics**: New `calculate_carbon_sequestration()` method in PURAnalytics
+  - Default 15 kg CO2/tree/year rate (conservative NbS average)
+  - Support for custom species-specific carbon rates
+  - 10-year and 30-year projection calculations
+  - Edge case handling for empty datasets
+- **Comprehensive Test Suite for Carbon Analytics**: 
+  - 5 new unit tests in `test_carbon_sequestration.py`
+  - Edge case validation (invalid carbon rates, boundary conditions)
+  - Consistency checks for projections
+- **Enhanced Module Documentation**:
+  - Module-level docstrings with usage examples
+  - Improved function docstrings across all methods
+  - Edge case handling documentation
+  - Type hints and error documentation
+- **Carbon Sequestration Examples in README**:
+  - Example code for default and custom carbon rate calculations
+  - Typical sequestration rates by species/land use type
+  - Integration examples for stakeholder reporting
+
+### Improved
+
+- All analytics methods now include comprehensive docstrings with return types, edge cases, and error conditions
+- Better error handling in `get_tree_survival_stats()` and `get_farmer_engagement_metrics()` (NULLIF guards)
+- Added input validation to `__init__()` and `calculate_planting_completion_rate()`
+- Improved database connection management with try/finally blocks
+
+### Fixed
+
+- Division-by-zero protection in survival rate calculations
+- Boundary condition handling in planting completion rate (days_back validation)
+- Empty farmer table handling in engagement metrics calculation
+
 ## [2.1.0] - 2026-03-10
 
 ### Added

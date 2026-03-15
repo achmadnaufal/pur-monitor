@@ -297,3 +297,180 @@ class PURAnalytics:
             }
         finally:
             con.close()
+
+    def calculate_survival_trend(
+        self,
+        window_visits: int = 3,
+    ) -> dict:
+        """
+        Analyse tree survival rate trend over the last N visits per parcel.
+
+        Identifies whether the portfolio is improving, stable, or declining
+        by comparing average survival rates across consecutive visit cohorts.
+
+        Args:
+            window_visits: Number of most-recent visits per parcel to include (default 3)
+
+        Returns:
+            Dict with:
+                - trend_direction: "improving", "stable", or "declining"
+                - avg_survival_first_visit_pct: Average survival in earliest included visit
+                - avg_survival_latest_visit_pct: Average survival in most-recent visit
+                - change_pct_points: Latest minus earliest (positive = improving)
+                - parcels_analyzed: Number of parcels with enough visit history
+                - window_visits: Visit window used
+
+        Raises:
+            ValueError: If window_visits < 2
+
+        Example:
+            >>> analytics = PURAnalytics("pur_monitor.db")
+            >>> trend = analytics.calculate_survival_trend(window_visits=3)
+            >>> print(f"Trend: {trend['trend_direction']} ({trend['change_pct_points']:+.1f} pp)")
+        """
+        if window_visits < 2:
+            raise ValueError("window_visits must be at least 2")
+
+        con = duckdb.connect(self.db_path, read_only=True)
+
+        try:
+            # Get ranked visits per parcel (most recent = rank 1)
+            rows = con.execute(f"""
+                WITH ranked AS (
+                    SELECT
+                        pv.parcel_id,
+                        pv.trees_alive,
+                        pc.number_of_tree AS trees_planned,
+                        ROW_NUMBER() OVER (PARTITION BY pv.parcel_id ORDER BY pv.visit_date DESC) AS rn
+                    FROM parcel_visits pv
+                    JOIN parcels pc ON pv.parcel_id = pc.id
+                    WHERE pc.number_of_tree > 0
+                )
+                SELECT parcel_id, trees_alive, trees_planned, rn
+                FROM ranked
+                WHERE rn <= {window_visits}
+                ORDER BY parcel_id, rn
+            """).fetchall()
+        finally:
+            con.close()
+
+        if not rows:
+            return {
+                "trend_direction": "unknown",
+                "parcels_analyzed": 0,
+                "window_visits": window_visits,
+                "change_pct_points": 0.0,
+            }
+
+        # Aggregate by parcel: compare first vs last in window
+        from collections import defaultdict
+        parcel_visits: dict = defaultdict(list)
+        for parcel_id, alive, planned, rn in rows:
+            survival = (alive / planned * 100) if planned > 0 else 0.0
+            parcel_visits[parcel_id].append((rn, survival))
+
+        first_survivals = []
+        latest_survivals = []
+        for parcel_id, visits in parcel_visits.items():
+            if len(visits) < 2:
+                continue
+            visits_sorted = sorted(visits, key=lambda x: x[0])  # oldest first (highest rn)
+            first_survivals.append(visits_sorted[0][1])
+            latest_survivals.append(visits_sorted[-1][1])
+
+        if not first_survivals:
+            return {
+                "trend_direction": "insufficient_data",
+                "parcels_analyzed": 0,
+                "window_visits": window_visits,
+                "change_pct_points": 0.0,
+            }
+
+        avg_first = sum(first_survivals) / len(first_survivals)
+        avg_latest = sum(latest_survivals) / len(latest_survivals)
+        change = avg_latest - avg_first
+
+        if change > 2.0:
+            direction = "improving"
+        elif change < -2.0:
+            direction = "declining"
+        else:
+            direction = "stable"
+
+        return {
+            "trend_direction": direction,
+            "avg_survival_first_visit_pct": round(avg_first, 1),
+            "avg_survival_latest_visit_pct": round(avg_latest, 1),
+            "change_pct_points": round(change, 2),
+            "parcels_analyzed": len(first_survivals),
+            "window_visits": window_visits,
+        }
+
+    def get_top_mortality_parcels(
+        self,
+        top_n: int = 5,
+        min_trees_planned: int = 10,
+    ) -> list:
+        """
+        Return parcels with the highest tree mortality in the latest visit.
+
+        Args:
+            top_n: Number of worst-performing parcels to return (default 5)
+            min_trees_planned: Minimum trees planned to include parcel (default 10)
+
+        Returns:
+            List of dicts with parcel_id, farmer_name, trees_planned,
+            trees_alive, mortality_rate_pct, and latest_visit_date
+
+        Raises:
+            ValueError: If top_n < 1
+
+        Example:
+            >>> worst = analytics.get_top_mortality_parcels(top_n=10)
+            >>> for p in worst:
+            ...     print(f"{p['parcel_id']}: {p['mortality_rate_pct']:.1f}% mortality")
+        """
+        if top_n < 1:
+            raise ValueError("top_n must be at least 1")
+
+        con = duckdb.connect(self.db_path, read_only=True)
+        try:
+            rows = con.execute(f"""
+                WITH latest_visits AS (
+                    SELECT pv.parcel_id,
+                           pv.trees_alive,
+                           pv.visit_date,
+                           ROW_NUMBER() OVER (PARTITION BY pv.parcel_id ORDER BY pv.visit_date DESC) AS rn
+                    FROM parcel_visits pv
+                ),
+                latest AS (
+                    SELECT * FROM latest_visits WHERE rn = 1
+                )
+                SELECT
+                    pc.id            AS parcel_id,
+                    f.name           AS farmer_name,
+                    pc.number_of_tree AS trees_planned,
+                    lv.trees_alive,
+                    lv.visit_date,
+                    ROUND(100.0 * (pc.number_of_tree - lv.trees_alive) / NULLIF(pc.number_of_tree, 0), 1) AS mortality_pct
+                FROM parcels pc
+                JOIN farmers f ON pc.farmer_id = f.id
+                JOIN latest lv ON pc.id = lv.parcel_id
+                WHERE pc.number_of_tree >= {min_trees_planned}
+                ORDER BY mortality_pct DESC
+                LIMIT {top_n}
+            """).fetchall()
+        finally:
+            con.close()
+
+        return [
+            {
+                "parcel_id": r[0],
+                "farmer_name": r[1],
+                "trees_planned": r[2],
+                "trees_alive": r[3],
+                "latest_visit_date": str(r[4]),
+                "mortality_rate_pct": r[5],
+            }
+            for r in rows
+        ]

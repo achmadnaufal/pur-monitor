@@ -1,3 +1,13 @@
-pur_monitor.db
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.log
+.env
+.venv/
+venv/
+*.DS_Store
+output/
+*.db

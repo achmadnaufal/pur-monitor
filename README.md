@@ -1,4 +1,12 @@
-# pur-monitor
+# 🌱 PUR Monitor
+
+![Python](https://img.shields.io/badge/python-3.12%2B-blue?logo=python)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Last Commit](https://img.shields.io/github/last-commit/achmadnaufal/pur-monitor)
+![Domain](https://img.shields.io/badge/domain-Nature--Based%20Solutions-2ea44f)
+![Stack](https://img.shields.io/badge/stack-DuckDB%20%7C%20Streamlit%20%7C%20KoboToolbox-blue)
+
+Real-time monitoring dashboard for PUR Latin America NbS field projects — tracking farmer participation, tree planting survival rates, parcel progress, and KoboToolbox form submissions across 5 concurrent projects in Peru, Colombia, and Brazil.
 
 **Domain:** Nature-Based Solutions (NbS)
 
@@ -89,6 +97,73 @@ This gets:
 2. Synced to DuckDB
 3. Aggregated in real-time dashboard
 4. Flagged if metrics deviate from target
+
+## 📊 Example Output
+
+```
+$ python3 demo/run_demo.py
+==============================================================
+  PUR Monitor — KPI Demo
+  NbS Field Project Monitoring (Latin America)
+==============================================================
+
+Portfolio KPI Summary:
+  Projects active       : 5
+  Active farmers        : 102/200 (51.0% of target)
+  Active parcels        : 100/410
+  Trees planned         : 97,354
+  Trees alive (latest)  : 86,317
+  Survival rate         : 88.7%
+
+Per-Project Breakdown:
+  Country    Project                                Farmers     Trees
+  --------------------------------------------------------------------
+  Peru       Bosques Amazonicos Peru I                   12    21,511
+  Peru       Reforestacion Andina Peru                    8    13,833
+  Colombia   Corredor Verde Colombia Norte               14    20,896
+  Colombia   Agroforestal Amazonia Colombia               9    18,174
+  Brazil     Refloresta Para Brasil                      13    22,940
+
+Top Mortality Causes:
+  Cause                        Incidents  Tree Loss
+  --------------------------------------------------
+  Poor Planting Technique            100      1,928
+  Animal Damage                       96      1,865
+  Flooding                            94      1,837
+  Unknown                             85      1,557
+  Pest/Disease                        83      1,325
+
+Farmer Demographics:
+  F: 24 (42.9%) | M: 32 (57.1%)
+  Active rate: 54/56 (96.4%)
+
+==============================================================
+  ✅ Demo complete — Launch Streamlit app:
+     streamlit run app.py
+==============================================================
+```
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    A[📱 KoboToolbox Forms\nField team submissions] --> B[REST API Sync\nJSON payload validation]
+    B --> C[DuckDB Database\npur_monitor.db]
+    C --> D[monitor.py CLI\nsummary · projects · mortality · farmers]
+    C --> E[Streamlit Dashboard\napp.py — KPI + charts + maps]
+    C --> F[PURAnalytics\nCarbon sequestration · survival trends]
+    D --> G[📊 Manager Reports\nTerminal tables + CSV export]
+    E --> H[🌐 Web Dashboard\nlocalhost:8501]
+    F --> I[📈 Impact Reports\nCarbon projections · biodiversity]
+
+    style A fill:#2d6a4f,color:#fff
+    style C fill:#1b4332,color:#fff
+    style H fill:#40916c,color:#fff
+```
+
+---
 
 ## 🔄 Data Flow
 

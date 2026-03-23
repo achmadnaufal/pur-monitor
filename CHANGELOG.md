@@ -2,6 +2,26 @@
 
 All notable changes to the PUR Monitor project are documented in this file.
 
+## [2.4.0] - 2026-03-23
+
+### Added
+- `blue_carbon.py` — Blue Carbon Stock Calculator for coastal ecosystem projects
+  - `BlueCarbonPlot` dataclass with full validation (ecosystem, zone, area, canopy)
+  - `BlueCarbonCalculator` with IPCC Wetlands Supplement Tier 1 emission factors
+  - `total_carbon_stock()` — biomass + soil stocks aggregated by ecosystem
+  - `annual_sequestration()` — canopy-cover-weighted annual tCO2e/yr
+  - `project_lifetime_credits()` — gross/net credit projection with discount rate
+  - `ecosystem_summary()` — sorted per-ecosystem breakdown
+  - Supports mangrove, seagrass, and tidal marsh ecosystems
+  - Climate zones: equatorial, tropical, subtropical, temperate
+- `data/sample_blue_carbon_plots.csv` — 10 realistic blue carbon plots from SE Asia
+- 26 unit tests in `tests/test_blue_carbon.py`
+
+### References
+- IPCC Wetlands Supplement (2013)
+- Verra VCS VM0033
+- Howard et al. (2014) Coastal Blue Carbon
+
 ## [2.3.0] - 2026-03-15
 
 ### Added

@@ -341,11 +341,15 @@ carbon = analytics.calculate_carbon_sequestration(species_rates)
 
 ## 📄 License
 
-MIT License. See LICENSE file for details.
+MIT License. See [LICENSE](LICENSE) for details.
 
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for version history and recent improvements.
+
+---
+
+> Built by [Achmad Naufal](https://github.com/achmadnaufal) | Lead Data Analyst | Power BI · SQL · Python · GIS
 
 
 ## Usage Examples

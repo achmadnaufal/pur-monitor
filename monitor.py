@@ -283,34 +283,7 @@ def cmd_farmers():
     con.close()
 
 
-COMMANDS = {
-    "summary":   (cmd_summary,   "KPI overview across all projects"),
-    "projects":  (cmd_projects,  "Per-project progress vs. targets"),
-    "mortality": (cmd_mortality, "Top mortality causes ranked by tree loss"),
-    "farmers":   (cmd_farmers,   "Gender breakdown + active rate per project"),
-    "export":    (lambda: cmd_export(sys.argv[2] if len(sys.argv) > 2 else "csv"), "Export to CSV/JSON"),
-    "species":   (cmd_species_breakdown, "Species distribution across active parcels"),
-}
 
-
-def usage():
-    console.print("\n[bold]PUR Monitor[/bold] — Latin America Reforestation Tracker\n")
-    console.print("[bold]Usage:[/bold]  python monitor.py <command>\n")
-    t = Table(box=box.SIMPLE, show_header=False)
-    t.add_column("cmd", style="bold green")
-    t.add_column("desc")
-    for cmd, (_, desc) in COMMANDS.items():
-        t.add_row(f"  {cmd}", desc)
-    console.print(t)
-
-
-if __name__ == "__main__":
-    if len(sys.argv) < 2 or sys.argv[1] not in COMMANDS:
-        usage()
-        sys.exit(0 if len(sys.argv) < 2 else 1)
-
-    fn, _ = COMMANDS[sys.argv[1]]
-    fn()
 
 
 def cmd_export(fmt: str = "csv"):
@@ -416,3 +389,31 @@ def cmd_species_breakdown():
     con.close()
 
 
+COMMANDS = {
+    "summary":   (cmd_summary,   "KPI overview across all projects"),
+    "projects":  (cmd_projects,  "Per-project progress vs. targets"),
+    "mortality": (cmd_mortality, "Top mortality causes ranked by tree loss"),
+    "farmers":   (cmd_farmers,   "Gender breakdown + active rate per project"),
+    "export":    (lambda: cmd_export(sys.argv[2] if len(sys.argv) > 2 else "csv"), "Export to CSV/JSON"),
+    "species":   (cmd_species_breakdown, "Species distribution across active parcels"),
+}
+
+
+def usage():
+    console.print("\n[bold]PUR Monitor[/bold] — Latin America Reforestation Tracker\n")
+    console.print("[bold]Usage:[/bold]  python monitor.py <command>\n")
+    t = Table(box=box.SIMPLE, show_header=False)
+    t.add_column("cmd", style="bold green")
+    t.add_column("desc")
+    for cmd, (_, desc) in COMMANDS.items():
+        t.add_row(f"  {cmd}", desc)
+    console.print(t)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2 or sys.argv[1] not in COMMANDS:
+        usage()
+        sys.exit(0 if len(sys.argv) < 2 else 1)
+
+    fn, _ = COMMANDS[sys.argv[1]]
+    fn()

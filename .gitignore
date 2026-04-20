@@ -1,13 +1,41 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*$py.class
+
+# Distribution / packaging
 *.egg-info/
-dist/
-build/
 .eggs/
-*.log
-.env
+build/
+dist/
+
+# Virtual environments
 .venv/
 venv/
-*.DS_Store
+env/
+
+# Secrets / local env
+.env
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Output / exports
 output/
+pur_monitor_export.csv
+pur_monitor_export.json
+
+# Databases — ignore future .db files to prevent accidental commits of local builds.
+# NOTE: pur_monitor.db is intentionally tracked as a demo fixture, so it stays in git
+# even though this glob matches it. Use `git rm --cached` only if we ever migrate away.
 *.db

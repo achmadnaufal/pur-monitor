@@ -135,11 +135,11 @@ def seed(con):
     ])
 
     con.executemany("INSERT INTO projects VALUES (?, ?, ?, ?, ?, ?)", [
-        (1, 1, 1, "Bosques Amazonicos Peru I",      "Peru",     2022),
-        (2, 1, 1, "Reforestacion Andina Peru",       "Peru",     2023),
-        (3, 1, 2, "Corredor Verde Colombia Norte",   "Colombia", 2022),
-        (4, 1, 2, "Agroforestal Amazonia Colombia",  "Colombia", 2023),
-        (5, 1, 3, "Refloresta Para Brasil",          "Brazil",   2022),
+        (1, 1, 1, "Sample Reforestation Project A",  "Peru",     2022),
+        (2, 1, 1, "Sample Reforestation Project B",  "Peru",     2023),
+        (3, 1, 2, "Sample Reforestation Project C",  "Colombia", 2022),
+        (4, 1, 2, "Sample Agroforestry Project D",   "Colombia", 2023),
+        (5, 1, 3, "Sample Reforestation Project E",  "Brazil",   2022),
     ])
 
     con.executemany("INSERT INTO project_targets VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [

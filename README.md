@@ -72,13 +72,13 @@ Portfolio KPI Summary:
   Survival rate         : 88.7%
 
 Per-Project Breakdown:
-  Country    Project                                Farmers     Trees
-  --------------------------------------------------------------------
-  Peru       Bosques Amazonicos Peru I                   12    21,511
-  Peru       Reforestacion Andina Peru                    8    13,833
-  Colombia   Corredor Verde Colombia Norte               14    20,896
-  Colombia   Agroforestal Amazonia Colombia               9    18,174
-  Brazil     Refloresta Para Brasil                      13    22,940
+  Country    Project                         Farmers     Trees
+  ------------------------------------------------------------
+  Peru       Sample Reforestation Project A       12    21,511
+  Peru       Sample Reforestation Project B        8    13,833
+  Colombia   Sample Reforestation Project C       14    20,896
+  Colombia   Sample Agroforestry Project D         9    18,174
+  Brazil     Sample Reforestation Project E       13    22,940
 
 Top Mortality Causes:
   Cause                        Incidents  Tree Loss
